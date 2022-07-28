@@ -1,0 +1,14 @@
+{
+  "go.inferGopath": false,
+  "[go]": {
+    "editor.tabSize": 4
+  },
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        "match": "\\.go$",
+        "cmd": "golines ${file} -w"
+      }
+    ]
+  }
+}
