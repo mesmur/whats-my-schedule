@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/pkg/browser"
 	"golang.org/x/oauth2"
 	"google.golang.org/api/calendar/v3"
 )
@@ -56,7 +57,7 @@ func CreateOauth2Config(clientID string, clientSecret string) *oauth2.Config {
 			TokenURL:  "https://oauth2.googleapis.com/token",
 			AuthStyle: 0,
 		},
-		RedirectURL: "http://localhost",
+		RedirectURL: "http://localhost:8081",
 		Scopes:      []string{calendar.CalendarReadonlyScope},
 	}
 
@@ -79,19 +80,31 @@ func CreateOauth2Config(clientID string, clientSecret string) *oauth2.Config {
 // GetTokenFromWeb Request a token from the web, then returns the retrieved token.
 func GetTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-	fmt.Printf("Go to the following link in your browser then type the "+
-		"authorization code: \n%v\n", authURL)
+	fmt.Printf(
+		"Go to the following link in your browser and authorize the app! \n%v\n",
+		authURL,
+	)
+
+	browser.OpenURL(authURL)
 
 	var authCode string
-	if _, err := fmt.Scan(&authCode); err != nil {
-		log.Fatalf("Unable to read authorization code: %v", err)
+
+	srv := &http.Server{Addr: ":8081"}
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		authCode = r.URL.Query().Get("code")
+		srv.Close()
+	})
+
+	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+		log.Fatalf("ListenAndServe(): %v", err)
 	}
 
-	tok, err := config.Exchange(context.TODO(), authCode)
+	token, err := config.Exchange(context.TODO(), authCode)
 	if err != nil {
 		log.Fatalf("Unable to retrieve token from web: %v", err)
 	}
-	return tok
+
+	return token
 }
 
 // SaveToken Saves a token to a file path.
