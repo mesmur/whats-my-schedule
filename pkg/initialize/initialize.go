@@ -15,11 +15,17 @@ import (
 
 const tokenFileName = "token.json"
 const secretFileName = "credentials.json"
+const configFileName = "config.json"
 
 // ClientDetails is a simple struct that contains client related information
 type ClientDetails struct {
 	id     string
 	secret string
+}
+
+// Config is the config object
+type Config struct {
+	CalendarName string
 }
 
 // GetFileAndPath get's the full filepath and the path for the given file
@@ -64,7 +70,7 @@ func CreateOauth2Config(clientID string, clientSecret string) *oauth2.Config {
 	file, path := GetFileAndPath(secretFileName)
 	err := os.MkdirAll(path, 0755)
 
-	fmt.Printf("Saving credential file to: %s\n", file)
+	fmt.Printf("Saving credential to: %s\n", file)
 
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
@@ -112,7 +118,7 @@ func SaveToken(token *oauth2.Token) {
 	file, path := GetFileAndPath(tokenFileName)
 	err := os.MkdirAll(path, 0755)
 
-	fmt.Printf("Saving credential file to: %s\n", file)
+	fmt.Printf("Saving token to: %s\n", file)
 
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
@@ -166,4 +172,39 @@ func GetClient() *http.Client {
 	}
 
 	return config.Client(context.Background(), tok)
+}
+
+// CreateConfig creates a config file that stores configuration options
+func CreateConfig() {
+	config := &Config{
+		CalendarName: "default",
+	}
+
+	file, _ := GetFileAndPath(configFileName)
+
+	fmt.Printf("Saving config  to: %s\n", file)
+
+	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+	if err != nil {
+		log.Fatalf("Unable to create config: %v", err)
+	}
+	defer f.Close()
+
+	json.NewEncoder(f).Encode(config)
+}
+
+// LoadConfig loads in a config file and returns a config object
+func LoadConfig() (*Config, error) {
+	file, _ := GetFileAndPath(configFileName)
+
+	f, err := os.Open(file)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	config := &Config{}
+	err = json.NewDecoder(f).Decode(config)
+
+	return config, err
 }
