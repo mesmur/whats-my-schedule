@@ -69,7 +69,7 @@ func CreateOauth2Config(clientID string, clientSecret string) *oauth2.Config {
 	file, path := GetFileAndPath(secretFileName)
 	err := os.MkdirAll(path, 0755)
 
-	fmt.Printf("Saving credential file to: %s\n", file)
+	fmt.Printf("Saving credential to: %s\n", file)
 
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
@@ -105,7 +105,7 @@ func SaveToken(token *oauth2.Token) {
 	file, path := GetFileAndPath(tokenFileName)
 	err := os.MkdirAll(path, 0755)
 
-	fmt.Printf("Saving credential file to: %s\n", file)
+	fmt.Printf("Saving token to: %s\n", file)
 
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
@@ -169,7 +169,7 @@ func CreateConfig() {
 
 	file, _ := GetFileAndPath(configFileName)
 
-	fmt.Printf("Saving config file to: %s\n", file)
+	fmt.Printf("Saving config  to: %s\n", file)
 
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
