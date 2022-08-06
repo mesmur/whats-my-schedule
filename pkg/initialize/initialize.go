@@ -177,7 +177,7 @@ func GetClient() *http.Client {
 // CreateConfig creates a config file that stores configuration options
 func CreateConfig() {
 	config := &Config{
-		CalendarName: "default",
+		CalendarName: "primary",
 	}
 
 	file, _ := GetFileAndPath(configFileName)

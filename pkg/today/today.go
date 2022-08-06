@@ -36,7 +36,7 @@ func GetEvents(srv *calendar.Service) {
 		TimeMax(tMax).
 		Do()
 	if err != nil {
-		log.Fatalf("Unable to retrieve next ten of the user's events: %v", err)
+		log.Fatalf("Unable to retrieve user events: %v", err)
 	}
 	if len(events.Items) == 0 {
 		fmt.Println("No upcoming events found.")
