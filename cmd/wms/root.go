@@ -6,7 +6,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
+	flag "github.com/spf13/pflag"
+	"github.com/spf13/viper"
 )
 
 var rootCmd = &cobra.Command{
@@ -25,7 +26,7 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	cmd, _, err := rootCmd.Find(os.Args[1:])
 	// default cmd if no cmd is given
-	if err == nil && cmd.Use == rootCmd.Use && cmd.Flags().Parse(os.Args[1:]) != pflag.ErrHelp {
+	if err == nil && cmd.Use == rootCmd.Use && cmd.Flags().Parse(os.Args[1:]) != flag.ErrHelp {
 		args := append([]string{todayCmd.Use}, os.Args[1:]...)
 		rootCmd.SetArgs(args)
 	}
@@ -34,6 +35,34 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-
 	// rootCmd.Execute()
+}
+
+func init() {
+	cobra.OnInitialize(initConfig)
+}
+
+func initConfig() {
+	// Gets the users home directory
+	home, err := os.UserHomeDir()
+	cobra.CheckErr(err)
+
+	// Sets the config path and path of the .wms files
+	configPath := home + "/.wms/config.json"
+	path := home + "/.wms"
+
+	// Creates the path if it does not exist
+	err = os.MkdirAll(path, 0755)
+	cobra.CheckErr(err)
+
+	// Set the Viper defaults
+	viper.SetDefault("calendar_name", "primary")
+
+	// Save the Config if it does not exist
+	viper.SafeWriteConfigAs(configPath)
+
+	// Set the config file and read it in
+	viper.SetConfigFile(configPath)
+	err = viper.ReadInConfig()
+	cobra.CheckErr(err)
 }
