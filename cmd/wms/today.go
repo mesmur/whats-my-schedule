@@ -2,6 +2,7 @@ package wms
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/MESMUR/wms/pkg/initialize"
@@ -16,8 +17,17 @@ var todayCmd = &cobra.Command{
 	Aliases: []string{"tod"},
 	Short:   "Gets today's schedule!",
 	Long:    "Gets today's schedule for the given calendar!",
-	Args:    cobra.ExactArgs(0),
+	Args:    cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		var calendarID string
+		if len(args) > 0 {
+			calendarID = args[0]
+		} else {
+			calendarID = "primary"
+		}
+
+		fmt.Printf("calID: %v", calendarID)
+
 		ctx := context.Background()
 
 		client := initialize.GetClient()
@@ -27,7 +37,7 @@ var todayCmd = &cobra.Command{
 			log.Fatalf("Unable to retrieve Calendar client: %v", err)
 		}
 
-		today.GetEvents(srv)
+		today.GetEvents(srv, calendarID)
 	},
 }
 

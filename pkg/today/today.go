@@ -21,7 +21,7 @@ var docRegex, _ = regexp.Compile(
 )
 
 // GetEvents oops
-func GetEvents(srv *calendar.Service) {
+func GetEvents(srv *calendar.Service, calendarID string) {
 	tod := time.Now()
 	tom := tod.AddDate(0, 0, 1)
 	tMin := time.Date(tod.Year(), tod.Month(), tod.Day(), 0, 0, 0, 0, tod.Location()).
