@@ -28,20 +28,19 @@ type Config struct {
 }
 
 // GetFileAndPath get's the full filepath and the path for the given file
-func GetFileAndPath(fileName string) (string, string) {
+func GetFileAndPath(fileName string) string {
 	path, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	path += "/.wms"
-	file := path + "/" + fileName
-	return file, path
+	file := path + "/.wms/" + fileName
+	return file
 }
 
 // CheckToken checks if a token exists and can be decoded
 func CheckToken() error {
-	file, _ := GetFileAndPath(tokenFileName)
+	file := GetFileAndPath(tokenFileName)
 	f, err := os.Open(file)
 	if err != nil {
 		return err
@@ -66,9 +65,7 @@ func CreateOauth2Config(clientID string, clientSecret string) *oauth2.Config {
 		Scopes:      []string{calendar.CalendarReadonlyScope},
 	}
 
-	file, path := GetFileAndPath(secretFileName)
-	err := os.MkdirAll(path, 0755)
-
+	file := GetFileAndPath(secretFileName)
 	fmt.Printf("Saving credential to: %s\n", file)
 
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
@@ -114,9 +111,7 @@ func GetTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 
 // SaveToken Saves a token to a file path.
 func SaveToken(token *oauth2.Token) {
-	file, path := GetFileAndPath(tokenFileName)
-	err := os.MkdirAll(path, 0755)
-
+	file := GetFileAndPath(tokenFileName)
 	fmt.Printf("Saving token to: %s\n", file)
 
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
@@ -130,7 +125,7 @@ func SaveToken(token *oauth2.Token) {
 
 // Retrieves a token from a local file.
 func tokenFromFile() (*oauth2.Token, error) {
-	file, _ := GetFileAndPath(tokenFileName)
+	file := GetFileAndPath(tokenFileName)
 
 	f, err := os.Open(file)
 	if err != nil {
@@ -143,7 +138,7 @@ func tokenFromFile() (*oauth2.Token, error) {
 }
 
 func configFromFile() (*oauth2.Config, error) {
-	file, _ := GetFileAndPath(secretFileName)
+	file := GetFileAndPath(secretFileName)
 	f, err := os.Open(file)
 	if err != nil {
 		return nil, err
