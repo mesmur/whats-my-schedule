@@ -25,7 +25,6 @@ var initCmd = &cobra.Command{
 		config := initialize.CreateOauth2Config(clientID, clientSecret)
 		token := initialize.GetTokenFromWeb(config)
 		initialize.SaveToken(token)
-		initialize.CreateConfig()
 
 		fmt.Println("Successfully authenticated and stored oAuth Token Credentials")
 	},
