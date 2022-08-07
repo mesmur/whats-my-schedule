@@ -6,7 +6,9 @@ test:
   - pkg/**/*_test.go
 
 source:
-  - all: ["cmd/**/*", "pkg/**/*"]
+  - cmd/**/*
+  - pkg/**/*
 
 docs:
-  - all: ["docs/*", README.md]
+  - docs/*
+  - README.md
