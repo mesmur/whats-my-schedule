@@ -8,9 +8,12 @@ import (
 	"github.com/MESMUR/wms/pkg/initialize"
 	"github.com/MESMUR/wms/pkg/today"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"google.golang.org/api/calendar/v3"
 	"google.golang.org/api/option"
 )
+
+var def bool
 
 var todayCmd = &cobra.Command{
 	Use:     "today",
@@ -23,10 +26,13 @@ var todayCmd = &cobra.Command{
 		if len(args) > 0 {
 			calendarID = args[0]
 		} else {
-			calendarID = "primary"
+			calendarID = fmt.Sprint(viper.Get("calendar_name"))
 		}
 
-		fmt.Printf("calID: %v", calendarID)
+		if def {
+			viper.Set("calendar_name", calendarID)
+			viper.WriteConfig()
+		}
 
 		ctx := context.Background()
 
@@ -42,5 +48,7 @@ var todayCmd = &cobra.Command{
 }
 
 func init() {
+	todayCmd.Flags().
+		BoolVarP(&def, "default", "d", false, "Sets the provided calendar as the default")
 	rootCmd.AddCommand(todayCmd)
 }

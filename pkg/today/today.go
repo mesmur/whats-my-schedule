@@ -28,7 +28,7 @@ func GetEvents(srv *calendar.Service, calendarID string) {
 		Format(time.RFC3339)
 	tMax := time.Date(tom.Year(), tom.Month(), tom.Day(), 0, 0, 0, 0, tom.Location()).
 		Format(time.RFC3339)
-	events, err := srv.Events.List("maahir@xendit.co").
+	events, err := srv.Events.List(calendarID).
 		ShowDeleted(false).
 		SingleEvents(true).
 		OrderBy("startTime").
