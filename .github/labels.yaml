@@ -1,0 +1,12 @@
+config:
+  - go.mod
+  - go.sum
+
+test:
+  - pkg/**/*_test.go
+
+source:
+  - any: ["cmd/**/*", "pkg/**/*"]
+
+docs:
+  - any: ["docs/*", README.md]
