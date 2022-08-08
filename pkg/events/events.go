@@ -1,4 +1,4 @@
-package today
+package events
 
 import (
 	"fmt"
@@ -21,8 +21,11 @@ var docRegex, _ = regexp.Compile(
 )
 
 // GetEvents oops
-func GetEvents(srv *calendar.Service, calendarID string) {
+func GetEvents(srv *calendar.Service, calendarID string, day int) {
 	tod := time.Now()
+	if day != 0 {
+		tod = tod.AddDate(0, 0, day)
+	}
 	tom := tod.AddDate(0, 0, 1)
 	tMin := time.Date(tod.Year(), tod.Month(), tod.Day(), 0, 0, 0, 0, tod.Location()).
 		Format(time.RFC3339)
