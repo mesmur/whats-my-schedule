@@ -13,13 +13,13 @@ import (
 	"google.golang.org/api/option"
 )
 
-var defToday bool
+var defTomorrow bool
 
-var todayCmd = &cobra.Command{
-	Use:     "today",
-	Aliases: []string{"tod"},
-	Short:   "Gets today's schedule!",
-	Long:    "Gets today's schedule for the given calendar!",
+var tomorrowCmd = &cobra.Command{
+	Use:     "tomorrow",
+	Aliases: []string{"tom"},
+	Short:   "Gets tomorrow's schedule!",
+	Long:    "Gets tomorrow's schedule for the given calendar!",
 	Args:    cobra.MaximumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var calendarID string
@@ -29,7 +29,7 @@ var todayCmd = &cobra.Command{
 			calendarID = fmt.Sprint(viper.Get("calendar_name"))
 		}
 
-		if defToday {
+		if defTomorrow {
 			viper.Set("calendar_name", calendarID)
 			viper.WriteConfig()
 		}
@@ -43,12 +43,12 @@ var todayCmd = &cobra.Command{
 			log.Fatalf("Unable to retrieve Calendar client: %v", err)
 		}
 
-		events.GetEvents(srv, calendarID, 0)
+		events.GetEvents(srv, calendarID, 1)
 	},
 }
 
 func init() {
-	todayCmd.Flags().
-		BoolVarP(&defToday, "default", "d", false, "Sets the provided calendar as the default")
-	rootCmd.AddCommand(todayCmd)
+	tomorrowCmd.Flags().
+		BoolVarP(&defTomorrow, "default", "d", false, "Sets the provided calendar as the default")
+	rootCmd.AddCommand(tomorrowCmd)
 }
